@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Draw Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 50px;
+      position: relative;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    #card-container {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card-image {
+      max-width: 300px; /* double size */
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    button {
+      font-size: 1rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #history-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #2196F3;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    #history {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      width: 300px;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      padding: 15px;
+      z-index: 999;
+      text-align: left;
+    }
+    .history-entry {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    input[type=number] {
+      width: 60px;
+      padding: 5px;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Card Draw Game</h1>
+
+  <div id="history-toggle" onclick="toggleHistory()">History 📜</div>
+
+  <div>
+    <input type="number" id="draw-count" value="1" min="1" max="50">
+    <button onclick="drawCards()">Draw</button>
+  </div>
+
+  <div id="card-container"></div>
+
+  <div id="history">
+    <h2 style="margin-top: 0;">Draw History</h2>
+    <div id="history-list"></div>
+  </div>
+
+  <script>
+    // Automatically generate 37 card paths
+    const cards = [];
+    for (let i = 1; i <= 36; i++) {
+      cards.push(`images/card${i}.png`);
+    }
+
+    function drawCards() {
+      let count = parseInt(document.getElementById('draw-count').value);
+      if (count > cards.length) count = cards.length;
+
+      const container = document.getElementById('card-container');
+      const historyList = document.getElementById('history-list');
+
+      container.innerHTML = '';
+      const drawn = [];
+
+      const shuffled = [...cards].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, count);
+
+      selected.forEach(imgSrc => {
+        drawn.push(imgSrc);
+
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.className = 'card-image';
+        container.appendChild(img);
+      });
+
+      const historyEntry = document.createElement('div');
+      historyEntry.className = 'history-entry';
+      const time = new Date().toLocaleTimeString();
+      historyEntry.innerHTML = `<strong>${time}</strong><br>` +
+        drawn.map(src => `<img src="${src}" class="card-image" style="max-width: 120px; margin-right: 5px;">`).join('');
+
+      historyList.prepend(historyEntry);
+    }
+
+    function toggleHistory() {
+      const historyPanel = document.getElementById('history');
+      if (historyPanel.style.display === 'none') {
+        historyPanel.style.display = 'block';
+      } else {
+        historyPanel.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
